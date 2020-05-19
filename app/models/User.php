@@ -7,8 +7,19 @@ class User{
         $this->db = new Database;
     }
     // register User in DB table users
-    public function register(){
+    public function register($data){
         $this->db->query("INSERT INTO users(name,email,password) VALUES(:name,:email,:password)");
+        //bind values
+        $this->db->bind(':name',$data['name']);
+        $this->db->bind(':email',$data['email']);
+        $this->db->bind(':password',$data['password']); 
+
+        //execute query
+        if($this->db->execute()){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     // method to find a user with registered email
