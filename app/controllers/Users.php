@@ -58,11 +58,11 @@
                     $data['password'] = password_hash($data['password'],PASSWORD_DEFAULT);
                     //Register User
                     if($this->userModel->register($data)){
+                        flash('register_success','You are registered and you can log in');
                         redirect('users/login');
                     }else{
                         die('Something went WRONG');
                     }
-
                 }else{
                     //Load view if there are any error
                     $this->view('users/register', $data);
