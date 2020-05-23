@@ -102,9 +102,26 @@
                 if(empty($data['password'])){
                     $data['password_err'] = 'Password not provided';
                 }
+                //check for user/email
+                if($this->userModel->findUserByEmail($data['email'])){
+                    //User found
+                }else{
+                    $data['email_err'] = 'No user found';
+                }
                 //check if errors are empty if yes->proceed with form/ if NOT display errors
                 if(empty($data['email_err']) && empty($data['password_err'])){
-                        die('Login form proceeded');
+                        // check and set logged in user
+                        $loggedInUser = $this->userModel->login($data['email'],$data['password']);
+
+                        if($loggedInUser){
+                            //create a session
+                            $this->createUserSession($loggedInUser);
+                        }else{
+                            $data['password_err'] = 'Password incorrect';
+
+                            //load view z incorrect password
+                            $this->view('users/login', $data);
+                        }
                 }else{
                     $this->view('users/login', $data);
                 }
@@ -119,5 +136,19 @@
                 //Load view
                 $this->view('users/login', $data);
             }
+        }
+        //method to create user session
+        public function createUserSession($user){
+            $_SESSION['user_id'] = $user->id;
+            $_SESSION['user_email'] = $user->email;
+            $_SESSION['user_name'] = $user->name;
+            redirect('posts');
+        }
+        //destroy session and logout/redirect
+        public function logout(){
+            unset($_SESSION['user_id']);
+            unset($_SESSION['user_email']);
+            unset($_SESSION['user_name']);
+            redirect('users/login');
         }
     }
