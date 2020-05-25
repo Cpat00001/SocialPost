@@ -51,4 +51,12 @@ class User{
             return false;
         }
     }
+    // method to find a user by given user_id from $post->user_id
+    public function getUserById($id){
+        $this->db->query('SELECT * FROM users WHERE id = :id');
+        $this->db->bind(':id',$id);
+
+        $row = $this->db->single();
+        return $row;
+    }
 }
